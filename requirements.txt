@@ -54,8 +54,8 @@ nest-asyncio==1.5.5
 notebook==6.4.11
 numpy
 packaging
-pandas==1.4.2
-pandocfilters==1.5.0
+pandas
+pandocfilters
 parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.1.0

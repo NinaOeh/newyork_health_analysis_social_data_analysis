@@ -1344,18 +1344,18 @@ elif tree_check and not health_check and not air_check and not assumpts_check:
                     the different districts.")
         # Create a text element and let the reader know the data is loading.
         data_load_state = st.text('Loading data...')
-        st.plotly_chart(tree_func.tree_count(tree_dens_data,geodata),use_container_width=True)
+        st.plotly_chart(tree_count(tree_dens_data,geodata),use_container_width=True)
         # Notify the reader that the data was successfully loaded.
         data_load_state.text("")
         st.markdown("One can see that the amount of trees had changed over the years. Let's look\
                     at the more recent change a bit more in detail.")
-        st.plotly_chart(tree_func.tree_change(tree_data, geodata),use_container_width=True)
+        st.plotly_chart(tree_change(tree_data, geodata),use_container_width=True)
         st.markdown("Great, it looks like between 2005 and 2015 the NY city council planted\
                     more trees across the city! But there are also several red areas, that \
                     indicate a loss of trees. Eventhough we will not analyse temporal patterns \
                     in this analysis, this is still interesting to have in mind.")
         with st.expander('Check out how much the tree density exactly changed per district'):
-            st.pyplot(tree_func.tree_change_per_district(tree_dens_data))
+            st.pyplot(tree_change_per_district(tree_dens_data))
             st.markdown("Only 7 districts have experienced a decrease in tree density from 2005 \
                         to 2015. 4 of which are located in Queens, 2 in Brooklyn, and 1 in Bronx.\
                         Note however that by this metrics, it is more difficult to increase the \
@@ -1400,7 +1400,7 @@ elif air_check and not tree_check and not health_check and not assumpts_check:
         # Create a text element and let the reader know the data is loading.
         with st.expander('Data distribution'):
             data_load_state = st.text('Loading data...')
-            st.pyplot(air_func.plot_air_equal(airquality_data))
+            st.pyplot(plot_air_equal(airquality_data))
             # Notify the reader that the data was successfully loaded.
             data_load_state.text("")
         st.markdown("Next, we want to look at the distribution of fine particle matter and sulfur\
@@ -1410,9 +1410,9 @@ elif air_check and not tree_check and not health_check and not assumpts_check:
         air_viz1=st.radio(label = 'Choose data to visualize geographically', options = ['Fine Particle Matter','Sulfur Dioxide'])
         data_load_state = st.text('Loading data...')
         if air_viz1=='Sulfur Dioxide':
-            st.plotly_chart(air_func.sulfur_on_map(airquality_data, geodata),use_container_width=True)
+            st.plotly_chart(sulfur_on_map(airquality_data, geodata),use_container_width=True)
         else:
-            st.plotly_chart(air_func.fine_particle_matter_on_map(airquality_data, geodata),use_container_width=True)
+            st.plotly_chart(fine_particle_matter_on_map(airquality_data, geodata),use_container_width=True)
         data_load_state.text("")
         st.markdown("It seems like there is quite a big difference between the different \
                     districts of the city. It will be interesting to see, if this is connected to \
@@ -1422,9 +1422,9 @@ elif air_check and not tree_check and not health_check and not assumpts_check:
         air_viz2=st.radio(label = 'Choose data for temporal visualization', options = ['Fine Particle Matter','Sulfur Dioxide'])
         data_load_state = st.text('Loading data...')
         if air_viz2=='Sulfur Dioxide':
-            st.bokeh_chart(air_func.sulfur_over_time(airquality_data),use_container_width=True)
+            st.bokeh_chart(sulfur_over_time(airquality_data),use_container_width=True)
         else:
-            st.bokeh_chart(air_func.fine_particle_over_time(airquality_data),use_container_width=True)
+            st.bokeh_chart(fine_particle_over_time(airquality_data),use_container_width=True)
         data_load_state.text("")
         st.markdown("Well, that's good news! The airpollution has gone down over time in all \
                     districts of the city.")
@@ -1534,7 +1534,7 @@ st.write("The models will try to predict the following variables:  \n"\
 
 
 # Loading the df used for the models, preprocessing included
-df_final = ml_func.loading_df() # final df used to build the model
+df_final = loading_df() # final df used to build the model
 
 with st.expander("Model creation and predictions"):
 	st.write("The two models are created using xgboost. The columns used for training the model are \
@@ -1542,11 +1542,11 @@ with st.expander("Model creation and predictions"):
         Life Expactancy Rate among the various district for the first and second model respectively. \
         The comparison between the real data and the predicted data is presented below. ")
 	# Creation of model 1
-	xgb_model_1, y_test_1, y_pred_1, mse_1 = ml_func.training_model_1(df_final)
+	xgb_model_1, y_test_1, y_pred_1, mse_1 = training_model_1(df_final)
 	# Creation of model 2
-	xgb_model_2, y_test_2, y_pred_2, mse_2 = ml_func.training_model_2(df_final)
+	xgb_model_2, y_test_2, y_pred_2, mse_2 = training_model_2(df_final)
 	
-	st.bokeh_chart(ml_func.plot_model_results(df_final, xgb_model_1, y_test_1, y_pred_1, mse_1, xgb_model_2, y_test_2, y_pred_2, mse_2),use_container_width=True)
+	st.bokeh_chart(plot_model_results(df_final, xgb_model_1, y_test_1, y_pred_1, mse_1, xgb_model_2, y_test_2, y_pred_2, mse_2),use_container_width=True)
 	
 	st.write("Results: As we can see from the graph, the model manages to predict the general \
          behaviour of the health rates analyzed.  \n")
@@ -1556,7 +1556,7 @@ with st.expander("Model Interpretation"):
          factors. Which one is more important? Tree density or Poverty rate, Smoking rate or \
             Sulfur Dioxide levels in the district?")
 	# plot model interpretability
-	st.pyplot(ml_func.model_interpretation(df_final, xgb_model_1, xgb_model_2),use_container_width=True)
+	st.pyplot(model_interpretation(df_final, xgb_model_1, xgb_model_2),use_container_width=True)
 	st.write("As we can see from the graph above, the most important features calculated from the \
         prediction model are the social aspects of the population. Unemployment and Poverty \
         appear to be the most important variables in avoiding Asthma and extending the Life Expectancy. \

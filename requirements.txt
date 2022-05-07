@@ -90,6 +90,7 @@ soupsieve==2.3.2.post1
 stack-data==0.2.0
 streamlit==1.9.0
 streamlit-folium==0.6.7
+streamlit-bokeh-events==0.1.2
 tenacity==8.0.1
 terminado==0.13.3
 threadpoolctl==3.1.0

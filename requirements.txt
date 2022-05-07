@@ -49,7 +49,7 @@ clyent
 colorama==0.4.4
 colorcet==3.0.0
 colour==0.1.5
-conda==4.12.0
+conda
 conda-build==3.21.4
 conda-content-trust==0+unknown
 conda-package-handling==1.7.3

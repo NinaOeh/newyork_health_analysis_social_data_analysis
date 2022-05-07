@@ -5,7 +5,6 @@ Created on Fri May  6 16:47:50 2022
 @author: ninao
 """
 import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np

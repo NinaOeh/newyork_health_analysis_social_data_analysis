@@ -4,25 +4,14 @@ Created on Tue May  3 13:43:43 2022
 
 @author: ninao
 """
-import streamlit as st
+
 import pandas as pd
 import numpy as np
-import geopandas as gpd
 import folium
 from matplotlib import pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import json
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import LabelEncoder
-from random import randint
-import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
-from plotly.subplots import make_subplots
 import scipy
-from plotly.io import write_image
-import folium
-from streamlit_folium import folium_static
 
 def health_data_on_map(health_data,geodata):
     data1=[]

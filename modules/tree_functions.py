@@ -4,27 +4,10 @@ Created on Tue May  3 17:51:51 2022
 
 @author: ninao
 """
-import streamlit as st
 import pandas as pd
 import numpy as np
-import geopandas as gpd
-import folium
 from matplotlib import pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import json
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import LabelEncoder
-from random import randint
-import plotly.express as px
 import plotly.graph_objects as go
-import seaborn as sns
-from plotly.subplots import make_subplots
-import scipy
-from plotly.io import write_image
-import folium
-from streamlit_folium import folium_static
-from functools import reduce
-from bokeh.plotting import figure
 
 
 

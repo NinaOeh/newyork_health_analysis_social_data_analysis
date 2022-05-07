@@ -6,54 +6,18 @@ Created on Tue May  3 16:52:00 2022
 """
 #All needed imports
 
-import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
-import numpy as np
-from math import radians, cos, sin, asin, sqrt
-import os
-import urllib.request
-import datetime as dt
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
-from sklearn import tree
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import plot_confusion_matrix, confusion_matrix,mean_absolute_error, classification_report, ConfusionMatrixDisplay
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report, confusion_matrix
-
-import bokeh
-from bokeh.plotting import figure,output_file, show
-from bokeh.models import ColumnDataSource, Legend, HoverTool, LabelSet
-from bokeh.io import output_notebook, reset_output
+from bokeh.plotting import figure
+from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.layouts import layout
 from bokeh.models.widgets import Tabs, Panel
 from bokeh.io import curdoc
-from bokeh.plotting import figure, output_file, save
-from IPython.display import IFrame
-from IPython.core.display import display, HTML
-import tempfile
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from math import radians, cos, sin, asin, sqrt
-import os
-import urllib.request
-import datetime as dt
-import seaborn as sns
 
-from zipfile import ZipFile
-import requests
-
-import plotly as py
 import plotly.graph_objects as go
-import json
-import matplotlib.pyplot as plt
-import seaborn as sns
-#caching.clear_cache()
+
 
 R = 6371 #Earth radius, km for grid mapping
 

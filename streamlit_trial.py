@@ -55,31 +55,41 @@ def health_data_on_map(health_data,geodata):
                                         locations=health_data["ID"], 
                                         z=health_data['Poverty'],
                                         colorbar=dict(title='Poverty <br>(% below minimum)'),
-                                        colorscale="sunset"
+                                        colorscale="sunset",
+                                        hovertext=health_data["Name"],
+                                        hoverinfo="text"
                                         ))
     data1.append(go.Choroplethmapbox(geojson=geodata, 
                                         locations=health_data["ID"], 
                                         z=health_data['Avoidable_Asthma'],
                                         colorbar=dict(title='Avoidable <br> Asthma <br> (nr. persons)'),
-                                        colorscale="sunset"
+                                        colorscale="sunset",
+                                        hovertext=health_data["Name"],
+                                        hoverinfo="text"
                                         ))
     data1.append(go.Choroplethmapbox(geojson=geodata, 
                                         locations=health_data["ID"], 
                                         z=health_data['Self_rep_health'],
                                         colorbar=dict(title='Self reported <br> health (%)'),
-                                        colorscale="sunset"
+                                        colorscale="sunset",
+                                        hovertext=health_data["Name"],
+                                        hoverinfo="text"
                                         ))
     data1.append(go.Choroplethmapbox(geojson=geodata, 
                                         locations=health_data["ID"], 
                                         z=health_data['Smoking'],
                                         colorbar=dict(title='Smoking (%)'),
-                                        colorscale="sunset"
+                                        colorscale="sunset",
+                                        hovertext=health_data["Name"],
+                                        hoverinfo="text"
                                         ))
     data1.append(go.Choroplethmapbox(geojson=geodata, 
                                         locations=health_data["ID"], 
                                         z=health_data['Life_expectancy_rate'],
                                         colorbar=dict(title='Life expectancy <br>(age)'),
-                                        colorscale="sunset"
+                                        colorscale="sunset",
+                                        hovertext=health_data["Name"],
+                                        hoverinfo="text"
                                         ))
     data1[0]['visible']=True
     data1[1]['visible']=False
@@ -297,6 +307,24 @@ def pairplot_health(health_data):
     g.fig.suptitle("Pairplot of health and social variables", y=1.08)
     return g
 
+def density_health(health_data):
+    plt.figure(figsize=(13,5), dpi= 80)
+    ax=sns.distplot((health_data["Poverty"]-np.mean(health_data["Poverty"]))/np.std(health_data["Poverty"]), color="dodgerblue", label="Poverty")
+    ax=sns.distplot((health_data["Avoidable asthma"]-np.mean(health_data["Avoidable asthma"]))/np.std(health_data["Avoidable asthma"]),color="orange", label="Avoidable asthma")
+    ax=sns.distplot((health_data["Self reported health"]-np.mean(health_data["Self reported health"]))/np.std(health_data["Self reported health"]), color="yellow", label="Self Reported Health")
+    ax=sns.distplot((health_data["Unemployment"]-np.mean(health_data["Unemployment"]))/np.std(health_data["Unemployment"]), color="red", label="Unemployment")
+    ax=sns.distplot((health_data["Smoking"]-np.mean(health_data["Smoking"]))/np.std(health_data["Smoking"]), color="green", label="Smoking")
+    ax=sns.distplot((health_data["Life expectancy"]-np.mean(health_data["Life expectancy"]))/np.std(health_data["Life expectancy"]), color="purple", label="Life expectancy")
+    
+    plt.ylim(0, 1)
+    
+    # Decoration
+    plt.title('Density Distribution of Health and Social features', fontsize=22)
+    ax.set(xlabel='Normalized distribution', ylabel='Density')
+    plt.legend()
+    fig=ax.get_figure()
+    return fig
+
 
 #%%% Here comes the code from air_functions
 
@@ -335,7 +363,10 @@ def fine_particle_matter_on_map(df,geo):
                                         locations=locations, 
                                         z=df_sub_temp['Data Value'],
                                         colorbar=dict(title=dict(text=Name+" - "+measure_info, side="right")),
-                                        colorscale="YlGn"
+                                        colorscale="Reds",
+										zmin=5,
+										zmax=19
+
                                         ))
         setting_dict = {}
         visibility_list = [False]*(len(set(df_temp['Start Year'])))
@@ -378,7 +409,10 @@ def sulfur_on_map(df,geo):
                                         locations=locations, 
                                         z=df_sub_temp['Data Value'],
                                         colorbar=dict(title=dict(text=Name+" - "+measure_info, side="right")),
-                                        colorscale="YlGn"
+                                        colorscale="YlOrBr",
+										zmin=0,
+										zmax=12
+
                                         ))
         setting_dict = {}
         visibility_list = [False]*(len(set(df_temp['Start Year'])))
@@ -528,18 +562,27 @@ def merge_data(df_air_,df_health_,df_trees_):
 
     
     # Merging the four datasets in one
-    df_air_trees_health = pd.concat([df_trees['counts_per_km2_2015'],df_trees['park_percent'], df_air_col_1, df_air_col_2,df_health[["Avoidable_Asthma","Poverty","Unemployment","Self_rep_health","Smoking","Life_expectancy_rate"]]], axis=1, join="inner")
-    #df_air_trees_health['Geo Place Name'] = pd.Series(id_neighbourhood_dict)
-    df_air_trees_health=df_air_trees_health.rename(columns={"counts_per_km2_2015":"Tree count","park_percent":"Park percentage","Self_rep_health":"Self reported health","Life_expectancy_rate":"Life expectancy","Avoidable_Asthma":"Avoidable Asthma"})
+    df_air_trees_health = pd.concat([df_trees, df_air_col_1, df_air_col_2,df_health[["Avoidable_Asthma","Poverty","Unemployment","Self_rep_health","Smoking","Life_expectancy_rate"]]], axis=1, join="inner")
+    df_air_trees_health['Geo Place Name'] = pd.Series(id_neighbourhood_dict)
+    #define the columns that we want to see the density from
+    #df_dens_plot=df_air_trees_health.copy()
+    #df_dens_plot=df_dens_plot.drop(['count_2005','count_1995','counts_per_km2_2005','counts_per_km2_1995','Geo Place Name'],axis=1)
+    #df_dens_plot.rename(columns = {'count_2015':'Tree count 2015', 'counts_per_km2_2015':'Tree density 2015 (counts pr km2)','parkarea [km^2]':'Parkarea [km2]','area_km2':'Area [km2]','park_percent':'Park percentage', 'Avoidable_Asthma':'Avoidable asthma','Life_expectancy_rate':'Life expectancy','Self_rep_health':'Self reported health'}, inplace = True)
+
+    
     return df_air_trees_health
 
 def air_health_tree_correlation(df_air,df_health,df_trees):
     
-    df_air_trees_health=merge_data(df_air,df_health,df_trees)
+    df_dens_plot=merge_data(df_air,df_health,df_trees)
+    df_dens_plot=df_dens_plot.drop(['count_2005','count_1995','counts_per_km2_2005','counts_per_km2_1995','Geo Place Name'],axis=1)
+    df_dens_plot.rename(columns = {'count_2015':'Tree count 2015', 'counts_per_km2_2015':'Tree density 2015 (counts pr km2)','parkarea [km^2]':'Parkarea [km2]','area_km2':'Area [km2]','park_percent':'Park percentage', 'Avoidable_Asthma':'Avoidable asthma','Life_expectancy_rate':'Life expectancy','Self_rep_health':'Self reported health'}, inplace = True)
+
     
     #correlation plot
-    corr = df_air_trees_health.corr()
-    ax = sns.heatmap(corr,vmin=-1, vmax=1, center=0, cmap=sns.diverging_palette(250, 15, s=75, l=40, n=100), square=True,annot=True)
+    corr = df_dens_plot.iloc[:,1:].corr()
+    plt.figure(figsize = (15,8))
+    ax = sns.heatmap(corr,vmin=-1, vmax=1, center=0, cmap=sns.diverging_palette(20, 220, n=256), square=True,annot=True)
     ax.set_xticklabels(ax.get_xticklabels(),rotation=90,horizontalalignment='right')
     ax.set_title('Correlation matrix of Air vs Tree vs Health dataframe')
     
@@ -674,7 +717,11 @@ def heatmap(x, y, **kwargs):
 
 
 def corrplot(df_air,df_health,df_trees, size_scale=500, marker='s'):
-    data=merge_data(df_air,df_health,df_trees).corr()
+    df_dens_plot=merge_data(df_air,df_health,df_trees)
+    df_dens_plot=df_dens_plot.drop(['count_2005','count_1995','counts_per_km2_2005','counts_per_km2_1995','Geo Place Name'],axis=1)
+    df_dens_plot.rename(columns = {'count_2015':'Tree count 2015', 'counts_per_km2_2015':'Tree density 2015 (counts pr km2)','parkarea [km^2]':'Parkarea [km2]','area_km2':'Area [km2]','park_percent':'Park percentage', 'Avoidable_Asthma':'Avoidable asthma','Life_expectancy_rate':'Life expectancy','Self_rep_health':'Self reported health'}, inplace = True)
+
+    data=df_dens_plot.iloc[:,1:].corr()
     corr = pd.melt(data.reset_index(), id_vars='index').replace(np.nan, 0)
     corr.columns = ['x', 'y', 'value']
     return heatmap(
@@ -687,6 +734,62 @@ def corrplot(df_air,df_health,df_trees, size_scale=500, marker='s'):
         y_order=data.columns[::-1],
         size_scale=size_scale
     )
+
+def density_all(df_air,df_health,df_trees):
+    df_dens_plot=merge_data(df_air,df_health,df_trees)
+    df_dens_plot=df_dens_plot.drop(['count_2005','count_1995','counts_per_km2_2005','counts_per_km2_1995','Geo Place Name'],axis=1)
+    df_dens_plot.rename(columns = {'count_2015':'Tree count 2015', 'counts_per_km2_2015':'Tree density 2015 (counts pr km2)','parkarea [km^2]':'Parkarea [km2]','area_km2':'Area [km2]','park_percent':'Park percentage', 'Avoidable_Asthma':'Avoidable asthma','Life_expectancy_rate':'Life expectancy','Self_rep_health':'Self reported health'}, inplace = True)
+
+    #make the plot
+    def make_plot(title, hist, edges, x, pdf):
+        p = figure(title=title, tools='', background_fill_color="#fafafa")
+        p.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:],
+               fill_color="navy", line_color="white", alpha=0.5)
+        p.line(x, pdf, line_color="#ff8888", line_width=4, alpha=0.7, legend_label="Density")
+    
+        p.y_range.start = 0
+        p.legend.location = "center_right"
+        p.legend.background_fill_color = "#fefefe"
+        p.xaxis.axis_label = 'x'
+        p.yaxis.axis_label = 'Pr(x)'
+        p.grid.grid_line_color="white"
+        return p
+    
+    fig_dict = {}
+    layout_dict = {}
+    tab_dict = {}
+    
+    #rename columns
+    
+    for Name in df_dens_plot.columns[1:]:
+        # Normal Distribution
+        mu=np.mean(df_dens_plot[Name])
+        sigma=np.std(df_dens_plot[Name])
+        hist, edges = np.histogram(df_dens_plot[Name], density=True, bins=10)
+        x = np.linspace(min(df_dens_plot[Name]), max(df_dens_plot[Name]), 1000)
+    
+        density = scipy.stats.gaussian_kde(df_dens_plot[Name])
+        pdf=density(x)
+    
+        p1 = make_plot(f"Normal Distribution (μ={mu}, σ={sigma})", hist, edges, x, pdf)
+        title = "Density distribution of "+Name
+        p1.title.text = title
+        p1.title.text_font_size = "15px"
+        p1.xaxis.axis_label = 'Distribution'
+        p1.yaxis.axis_label = 'Density'
+        fig_dict[Name]=p1
+    
+        layout_dict[Name] = layout([fig_dict[Name]], sizing_mode='stretch_both')
+    
+        tab_dict[Name] = Panel(child=layout_dict[Name], title=Name)
+    
+    
+    tabs = Tabs(tabs=list(tab_dict.values()))
+    curdoc().add_root(tabs)
+    
+    return tabs
+
+
 
 
 #%% Here comes the code from tree_functions
@@ -875,56 +978,6 @@ def load_airquality_data():
     df['Date'] = pd.to_datetime(df['Start_Date'], format='%M/%d/%Y')
     return df
 
-#%%%%%% Map Plot
-
-#Map of NY
-def ny_map():
-    map_hooray = folium.Map(location=[40.7, -73.86],
-                        width="%60",
-                        height="%70",
-                        zoom_start = 10) # Uses lat then lon. The bigger the zoom number, the closer in you get
-    return map_hooray # Calls the map to display
-
-def ny_map_trees(df_trees_2015):
-    tree_type_list=df_trees_2015["spc_latin"].unique()
-    
-    #get ten most common tree-types:
-    n = 10
-    tree_type_list=df_trees_2015["spc_latin"].value_counts()[:n].index.tolist()
-    
-    # Filter the DF for rows, then columns, then remove NaNs
-    heat_df = df_trees_2015[df_trees_2015["spc_latin"].isin(tree_type_list)] # Reducing data size so it runs faster
-    
-    
-    heat_df = heat_df[['latitude', 'longitude']]
-    heat_df = heat_df.dropna(axis=0, subset=['latitude','longitude'])
-    
-    
-    m = folium.Map(
-        location=[40.7, -73.86],
-        width="%60",
-        height="%70",
-        zoom_start=10,
-    )
-    
-    # List comprehension to make out list of lists
-    heat_data = [[row['latitude'],row['longitude']] for index, row in heat_df.iterrows()]
-    
-    # Plot it on the map
-    HeatMap(heat_data,radius = 5, min_opacity = 3,gradient={0.3:'darkgreen',.6: 'green',0.8:'yellow', .9: 'orange'}).add_to(m)
-    
-    #def plotDot(point):
-    #    '''input: series that contains a numeric named latitude and a numeric named longitude
-    #    this function creates a CircleMarker and adds it to your this_map'''
-    #    folium.CircleMarker(location=[point.latitude, point.longitude],
-    #                        radius=2,
-    #                        weight=5).add_to(m)
-    
-    #use df.apply(,axis=1) to "iterate" through every row in your dataframe
-    #heat_df.apply(plotDot, axis = 1)
-    
-    # Display the map
-    return m
 
 #%% Here comes the code from "model_functions
 
@@ -1132,7 +1185,56 @@ def model_interpretation(df_final, xgb_model_1, xgb_model_2):
 	return fig
 	
 
+#%%%%%% Map Plot
 
+#Map of NY
+def ny_map():
+    map_hooray = folium.Map(location=[40.7, -73.86],
+                        width="%60",
+                        height="%70",
+                        zoom_start = 10) # Uses lat then lon. The bigger the zoom number, the closer in you get
+    return map_hooray # Calls the map to display
+
+def ny_map_trees(df_trees_2015):
+    tree_type_list=df_trees_2015["spc_latin"].unique()
+    
+    #get ten most common tree-types:
+    n = 10
+    tree_type_list=df_trees_2015["spc_latin"].value_counts()[:n].index.tolist()
+    
+    # Filter the DF for rows, then columns, then remove NaNs
+    heat_df = df_trees_2015[df_trees_2015["spc_latin"].isin(tree_type_list)] # Reducing data size so it runs faster
+    
+    
+    heat_df = heat_df[['latitude', 'longitude']]
+    heat_df = heat_df.dropna(axis=0, subset=['latitude','longitude'])
+    
+    
+    m = folium.Map(
+        location=[40.706005, -74.008827],
+        width="%60",
+        height="%70",
+        zoom_start=15,
+    )
+    
+    # List comprehension to make out list of lists
+    heat_data = [[row['latitude'],row['longitude']] for index, row in heat_df.iterrows()]
+    
+    # Plot it on the map
+    HeatMap(heat_data,radius = 7, min_opacity = 3,gradient={0.3:'darkgreen',.6: 'green',0.75:'yellow', .9: 'orange'}).add_to(m)
+    
+    #def plotDot(point):
+    #    '''input: series that contains a numeric named latitude and a numeric named longitude
+    #    this function creates a CircleMarker and adds it to your this_map'''
+    #    folium.CircleMarker(location=[point.latitude, point.longitude],
+    #                        radius=2,
+    #                        weight=5).add_to(m)
+    
+    #use df.apply(,axis=1) to "iterate" through every row in your dataframe
+    #heat_df.apply(plotDot, axis = 1)
+    
+    # Display the map
+    return m
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Data load
 # Load the data
@@ -1157,8 +1259,6 @@ correlation_im = Image.open("./data/images/corr.png")
 
 #set title
 st.title('Do trees influence the health of NY citizens?')
-# Create a text element and let the reader know the data is loading.
-data_load_state = st.text('Loading data...')
 
 # Add the overview of the article to the sidebar:
 add_selectbox = st.sidebar.markdown('''
@@ -1167,7 +1267,6 @@ add_selectbox = st.sidebar.markdown('''
 - [Data Exploration](#data_exploration)
 - [Correlation Analysis between airquality, health and tree density](#correlation)
 - [Machine Learning model](#machinelearning)
-- [Predicting health by trees?](#prediction)
 - [Conclusion](#conclusion)
 ''', unsafe_allow_html=False)
 
@@ -1189,10 +1288,10 @@ with left_column1:
                 in the city, sitting on one of the few benches next to the main road.")
                     
     st.markdown("We all know the calming effect that nature can have on us and \
-                it is proven, that street trees are no exception for that. Scientist \
-                that studied the effect of street trees on mental health in France \
+                it is proven, that street trees are no exception for that. Scientist from the UK\
+                that studied the effect of street trees on mental health  \
                 in 2020 found out, that the presence of street trees can even \
-                be more efficient than antidepressiva. But what about the \
+                be more efficient than antidepressiva ([Marselle et.al, Urban street tree biodiversity and antidepressant prescriptions](https://www.nature.com/articles/s41598-020-79924-5#citeas)). But what about the \
                 physical health? Obviously, due to their carbon-storing \
                 nature through photosynthesis, trees should have a positive effect \
                 on the air-quality in a city. But is this influence trackable \
@@ -1203,11 +1302,14 @@ with left_column1:
                     air pollution and see how and if they are connected.")
 
 with right_column1:
+    # Create a text element and let the reader know the data is loading.
+    data_load_state = st.text('Loading data...')
     st.markdown("###### Look at the tree distribution of NY!")
     folium_static(ny_map_trees(tree_data[2]))
+    # Notify the reader that the data was successfully loaded.
+    data_load_state.text("")
 
-# Notify the reader that the data was successfully loaded.
-data_load_state.text("")
+
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 st.header("Data Exploration")
@@ -1245,8 +1347,8 @@ st.markdown("The dataset we used to analyze the airquality comes from the Enviro
             Portal, which is run by the NYC Environmental Public Health Tracking Program and contains\
             [New York City air quality surveillance data](http://nyc.gov/health/environmentdata).",
             unsafe_allow_html=False)
-
-        
+    
+      
             
 #Options for the reader to look at the datasets
 st.success("Please choose one dataset at a time, to explore the data that we used for the analysis!")
@@ -1289,9 +1391,17 @@ if health_check and not tree_check and not air_check and not assumpts_check:
                         ''')
     
             st.write(health_data)
-        st.markdown("Given that the dataset already grouped all individual data into the districts of the city\
+        st.markdown("To get a feeling for the distribution of the data, in a first step the density distribution \
+                    across the city is plotted.")
+        st.pyplot(density_health(health_data),use_container_width=True)
+        st.markdown('''
+                    It looks like there is a significant difference in health and social aspects amongst the different\
+                    districts of the city.
+                    
+                    Given that the dataset already grouped all individual data into the districts of the city\
                     we can make use of that and look at the distribution of the different factors across the city.\
-                    Use the dropdown menu to the right to choose between the different variables.")
+                    Use the dropdown menu to the left to choose between the different variables.\
+                    ''')
         # Create a text element and let the reader know the data is loading.
         data_load_state = st.text('Loading data...')
         st.plotly_chart(health_data_on_map(health_data,geodata),use_container_width=True)
@@ -1461,6 +1571,19 @@ elif assumpts_check and not tree_check and not health_check and not air_check:
                     4.) Finally we assume that **every district is homogenous across itself**. \
                         Thus it is sufficient to group the data into the different communal districts for the analysis.
                     ''')
+                    
+st.markdown("Overall, the data exploration shows that there are big differences in regards to all variables across the\
+            city of New York. There are areas with high airpollution like **Sheepheads Bay** and areas with lower airpollution like **East New York and Starrett City**, with a big \
+            tree density like **Upper West Side** and a low tree density like **Coney Island** and wealthy areas like **Tottenville and Great Kills** and poor areas like **Morrisania and Crotona**. \
+            ")
+c1,c2,c3=st.columns((1,2,1))
+with c2:
+    st.bokeh_chart(density_all(airquality_data,health_data,tree_dens_data),use_container_width=True)
+
+st.markdown("When looking at the density distribution of each variable across the city, these findings are confirmed.\
+                The distributions differ a lot between the different variables and no pattern is visible at first sight.\
+                Also the shape of the distributions changes quite significantly and does mainly not follow a nice \
+                normal distribution.")
         
 
 
@@ -1482,18 +1605,45 @@ with lc:
                 Then we merged them together into one dataset, grouped by the unique community districts. \
                 ")
     st.markdown('''
+                To analyze the correlation between the different datasets, we defined important variables from each\
+                dataset, that were relevant for our analysis.\
+                Then we merged them together into one dataset, grouped by the unique community districts. \
+                The variables that were chosen for the further analysis are: \n
+                * Area [km2] \n
+                * Tree count 2015 \n
+                * Tree density 2015 \n
+                * Park area \n
+                * Park percentage \n
+                * Fine Particulate Matter \n
+                * Sulfur Dioxide \n
+                * Avoidable asthma \n
+                * Poverty \n
+                * Unemployment \n
+                * Smoking \n
+                * Self reported health \n
+                * Life expectancy \n
+                ''')
+    st.markdown("#### $R^2$ Value \
+                Another indicator of correlation is the $R^2$ Value. The R2 value indicates how much a \
+                change in one variable influences the change on another variable. In this analysis this \
+                is tested independent for each pair of variables.\
+                The pairwise $R^2$ values for the listed variables are listed below:\
+                ")
+
+
+with rc:
+    st.markdown('''
+                ### Correlation Matrix
                 The correlation matrix shows which variables are correlated and which not,\
                 claculated with the Pearson coefficient, a linear measure\
                 of the correlation  between each of the variables. Big blue boxes symbolize a high positive correlation,
                 meaning that when one of the pairs' values increase, the other pairs' values increase too. And big\
                 red boxes symbolize a high negative correlation, meaning that when one of the pairs' values increase, \
                 the other pairs' values decrease.''')
-
-
-with rc:
-    
     st.pyplot(corrplot(airquality_data, health_data, tree_dens_data))
-    with st.expander("See the (simple) math behind it"):
+    with st.expander("The corresponding Poisson values"):
+        st.pyplot(air_health_tree_correlation(airquality_data,health_data,tree_dens_data))
+    with st.expander("See the math behind it"):
         st.markdown("The Pearson correlation coefficient is calculated in the following way:")
         
         st.image(correlation_im)
@@ -1511,21 +1661,23 @@ with rc:
 #%%%%%%%%%%%%%%%%%%%%%%% Machine Learning
 st.header("Machine Learning model")
 
-st.write("In this notebook, we create two models that uses data related to the various \
+st.write("We create two models that use data related to the various \
 districts of New York to predict the Health related rates among the population.")
-st.write("The data related to each district used in the training consists of the following:  \n"\
-"""    
-* Tree counts  \n \
-* District areas  \n \
-* Trees' density  \n \
-* Percentage district area occupied by parks  \n \
-* Fine Particulate Matter (PM2.5) (mcg per cubic meter)  \n \
-* Sulfur Dioxide (SO2) (ppb)  \n \
-* Poverty rate  \n \
-* Smoking rate  \n \
-* Unemployment rate  \n \
-* Self reported health status
-""")
+
+with st.expander("Variables used in the model"):
+    st.write("The data related to each district used in the training consists of the following:  \n"\
+    """    
+    * Tree counts  \n \
+    * District areas  \n \
+    * Trees' density  \n \
+    * Percentage district area occupied by parks  \n \
+    * Fine Particulate Matter (PM2.5) (mcg per cubic meter)  \n \
+    * Sulfur Dioxide (SO2) (ppb)  \n \
+    * Poverty rate  \n \
+    * Smoking rate  \n \
+    * Unemployment rate  \n \
+    * Self reported health status
+    """)
 st.write("The models will try to predict the following variables:  \n"\
 """    
 * Number of people with Avoidable Asthma per 100 000 people  \n \
@@ -1536,28 +1688,28 @@ st.write("The models will try to predict the following variables:  \n"\
 # Loading the df used for the models, preprocessing included
 df_final = loading_df() # final df used to build the model
 
-with st.expander("Model creation and predictions"):
-	st.write("The two models are created using xgboost. The columns used for training the model are \
-          those indicated above, while the target variable are the Avoidable Asthma Rate and the \
-        Life Expactancy Rate among the various district for the first and second model respectively. \
-        The comparison between the real data and the predicted data is presented below. ")
+st.markdown("#### Model creation and prediction")
+st.write("The two models are created using xgboost. The columns used for training the model are \
+  those indicated above, while the target variable are the Avoidable Asthma Rate and the \
+Life Expactancy Rate among the various district for the first and second model respectively. \
+The comparison between the real data and the predicted data is presented below. ")
 	# Creation of model 1
-	xgb_model_1, y_test_1, y_pred_1, mse_1 = training_model_1(df_final)
+xgb_model_1, y_test_1, y_pred_1, mse_1 = training_model_1(df_final)
 	# Creation of model 2
-	xgb_model_2, y_test_2, y_pred_2, mse_2 = training_model_2(df_final)
+xgb_model_2, y_test_2, y_pred_2, mse_2 = training_model_2(df_final)
 	
-	st.bokeh_chart(plot_model_results(df_final, xgb_model_1, y_test_1, y_pred_1, mse_1, xgb_model_2, y_test_2, y_pred_2, mse_2),use_container_width=True)
+st.bokeh_chart(plot_model_results(df_final, xgb_model_1, y_test_1, y_pred_1, mse_1, xgb_model_2, y_test_2, y_pred_2, mse_2),use_container_width=True)
 	
-	st.write("Results: As we can see from the graph, the model manages to predict the general \
-         behaviour of the health rates analyzed.  \n")
+st.write("Results: As we can see from the graph, the model manages to predict the general \
+ behaviour of the health rates analyzed.  \n")
 
-with st.expander("Model Interpretation"):
-	st.write("We want now to analyze the importance of each variable used to predict the two health \
+st.markdown("#### Model interpretation")
+st.write("We want now to analyze the importance of each variable used to predict the two health \
          factors. Which one is more important? Tree density or Poverty rate, Smoking rate or \
             Sulfur Dioxide levels in the district?")
 	# plot model interpretability
-	st.pyplot(model_interpretation(df_final, xgb_model_1, xgb_model_2),use_container_width=True)
-	st.write("As we can see from the graph above, the most important features calculated from the \
+st.pyplot(model_interpretation(df_final, xgb_model_1, xgb_model_2),use_container_width=True)
+st.write("As we can see from the graph above, the most important features calculated from the \
         prediction model are the social aspects of the population. Unemployment and Poverty \
         appear to be the most important variables in avoiding Asthma and extending the Life Expectancy. \
         The latter, appears to be also determined by the Fine particular matter (PM2.5) level in \
@@ -1566,7 +1718,7 @@ with st.expander("Model Interpretation"):
 	
 #%%%%%%%%%%%%%%%%%%%%%%%Conclusion
 st.header("Conclusion")
-st.write("The purpose of this analysis was to understand what is the relation between health, \
+st.markdown('''The purpose of this analysis was to understand what is the relation between health, \
 trees and air quality among the districts of New York City. We studied different datasets, \
 and built a Machine Learning Model that predicted Avoidable Asthma Rate and Life Expectancy \
 Rate in 2015 using social aspects, air quality levels and tree density in the various districts. \
@@ -1574,9 +1726,18 @@ The results are that the most important variables when considering health are so
 related to the economic conditions of the people studied, in our case employment and poverty. \
 Air pollution also affects the Life expectancy, although we only found low influence when \
 considering the Sulfur Dioxide levels, probably because of the low variance between district \
-in the chosen year. On te other hand, the amounth of trees in a districts appears to have very \
-low importance. The reason behind this is that probably the effect of trees on health can only \
-be seen in a greater scale, and not analyzing each specific district.")
+in the chosen year. On the other hand, the amount of trees in a districts appears to have very \
+low importance. A reason might be that probably the effect of trees on health can only \
+be seen in a greater scale, and not analyzing each specific district. Furthermore, the \
+trees that we look at are trees that are planted next to streets. Thus more trees also indicates\
+more streets.
+
+Overall, although we can't see a direct correlation between the number of trees and the physical\
+health of the citizens, trees are an important factor of life in a city.
+In order to predict the physical health of the citizens of NY one has to take\
+into account a lot more factors than just the number of trees in the districts, most of all the\
+social factors. 
+''')
 
 #%%%% Hide Menu
 hide_menu_style = """

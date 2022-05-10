@@ -1067,10 +1067,10 @@ def training_model_1(df_final):
 						"Sulfur Dioxide (SO2)", 
 						"Poverty",
 						"Smoking",
-						"Self_rep_health",
+						"Self reported health",
 						"Unemployment",
 						'park_percent'] 
-	target_column = ["Avoidable_Asthma"]
+	target_column = ["Avoidable asthma"]
 	X = df_final[training_columns]
 	y = df_final[target_column]
 	X_train, X_test, y_train, y_test = train_test_split(X, y, 
@@ -1092,10 +1092,10 @@ def training_model_2(df_final):
 						"Sulfur Dioxide (SO2)",
 						"Poverty",
 						"Smoking",
-						"Self_rep_health",
+						"Self reported health",
 						"Unemployment",
 						'park_percent'] 
-	target_column = ["Life_expectancy_rate"]
+	target_column = ["Life expectancy"]
 	X = df_final[training_columns]
 	y = df_final[target_column]
 	X_train, X_test, y_train, y_test = train_test_split(X, y, 
@@ -1178,7 +1178,7 @@ def plot_model_results(df_final, xgb_model_1, y_test_1, y_pred_1, mse_1, xgb_mod
 	l2 = layout([[fig2]], sizing_mode='stretch_both')
 
 	tab1 = Panel(child=l1,title="Avoidable Asthma Rate")
-	tab2 = Panel(child=l2,title="Life Expectancy Rate")
+	tab2 = Panel(child=l2,title="Life Expectancy")
 	tabs = Tabs(tabs=[tab1, tab2])
 
 	curdoc().add_root(tabs)
@@ -1209,7 +1209,7 @@ def model_interpretation(df_final, xgb_model_1, xgb_model_2):
 	plt.ylabel('Parameters', fontsize=5)
 	plt.xticks(fontsize=3)
 	plt.yticks(fontsize=3)
-	plt.legend(['Avoidable Asthma rate','Life Expectancy rate'], loc=4,prop={'size': 5})
+	plt.legend(['Avoidable Asthma rate','Life Expectancy'], loc=4,prop={'size': 5})
 	return fig
 	
 
@@ -1593,8 +1593,8 @@ elif assumpts_check and not tree_check and not health_check and not air_check:
                             of the city between 2013 and 2015**. 
                             
                         2.) To calculate the tree density and tree count all trees are treated equally and no difference\
-                            is made between healthy or ill, big or small trees. Our second assumption is that **\
-                            all trees have the same influence.**
+                            is made between healthy or ill, big or small trees. Our second assumption is that \
+                            **all trees have the same influence.**
                             
                         3.) For the park data, parks that stretched over more than one community district were \
                             distributed equally to these districts, assuming that **big parks distribute equally\
@@ -1678,8 +1678,10 @@ st.markdown("One can see that the main correlation is found between the social a
             That indicates that, when viewed independently, the variables from the different datasets don't \
             have a high influence on the variance of one another and thus the amount of street trees \
             does not seem to directly influence the physical health of the citizens. However, there seems\
-            to be a high correlation between the social factors, especially `Poverty` and `Unemployment`\
-            and the health. Look at the following pairplot, so see with the help of the pairwise linear regression of the \
+            to be a almost shocking high correlation between the social factors, especially `Poverty` and `Unemployment`\
+            and the health and life expectancy of people. Rich people seem to live a lot longer than poor people and \
+            suffer from avoidable asthma significantly less.\
+            Look at the following pairplot, so see with the help of the pairwise linear regression of the \
             analyzed variables, how strong the linear correlation between social factors and health is.")
 with st.expander("Pairplot of the analyzed variables"):
     st.pyplot(pairplots(airquality_data,health_data,tree_dens_data))
@@ -1714,7 +1716,7 @@ st.write("The models will try to predict the following variables:  \n"\
 
 
 # Loading the df used for the models, preprocessing included
-df_final = loading_df() # final df used to build the model
+df_final = merge_data(airquality_data, health_data, tree_dens_data) # final df used to build the model
 
 st.markdown("#### Model creation and prediction")
 st.write("The two models are created using xgboost. The columns used for training the model are \
@@ -1762,7 +1764,7 @@ more streets.
 
 Overall, although we can't see a direct correlation between the number of trees and the physical \
 health of the citizens, trees are an important factor of life in a city.
-Yet, in order to predict the physical health of the citizens of NY one has to take\
+Yet, in order to predict the physical health of the citizens of NY one has to take \
 into account a lot more factors than just the number of trees in the districts, most of all the\
 social factors. 
 ''')

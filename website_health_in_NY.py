@@ -1298,7 +1298,7 @@ st.sidebar.markdown("* [Correlation Analysis between airquality, health and tree
 st.sidebar.markdown("* [Machine Learning model](#machine-learning-model)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Conclusion](#conclusion)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Notebook](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb)", unsafe_allow_html=True)
-
+st.sidebar.markdown("* [Data](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/tree/main/data)")
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 st.header("Introduction")

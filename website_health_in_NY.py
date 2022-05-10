@@ -975,7 +975,7 @@ def tree_change_per_district(df):
 geodata =  json.load(open('./data/geo_files/json/CD.json', 'r'))
 geo = json.load(open("./data/geo_files/json/community_districts_updated.geojson"))
 
-@st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True,ttl=2*3600)
 def load_health_data():
     health_data = pd.read_csv('./data/health/2015_Health2.csv',sep=";")
     # filtering the data according to required subsets
@@ -986,7 +986,7 @@ def load_health_data():
     health_data=health_data.iloc[:59]
     return health_data
 
-@st.cache
+@st.cache(ttl=2*3600)
 def load_tree_data():
     df_trees_1995 = pd.read_csv("./data/trees/trim_final_clean_new_york_tree_census_1995.csv")
     df_trees_2005 = pd.read_csv("./data/trees/trim_final_clean_new_york_tree_census_2005.csv")
@@ -998,7 +998,7 @@ def tree_density_data(geo,df):
     df_counts = pd.read_csv("./data/trees/areas_tree_counts.csv")
     return df_counts
 
-@st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True,ttl=2*3600)
 def load_airquality_data():
     df = pd.read_csv("./data/air_quality/Air_Quality.csv")
     df['Start_Date'] =  pd.to_datetime(df['Start_Date'], format='%m/%d/%Y')

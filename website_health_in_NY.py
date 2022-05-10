@@ -1297,6 +1297,7 @@ st.sidebar.markdown("* [Data Exploration](#data-exploration)", unsafe_allow_html
 st.sidebar.markdown("* [Correlation Analysis between airquality, health and tree density](#correlation-analysis-between-airquality-health-and-tree-density)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Machine Learning model](#machine-learning-model)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Conclusion](#conclusion)", unsafe_allow_html=True)
+st.sidebar.markdown("* [Notebook](#notebook)", unsafe_allow_html=True)
 
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1380,7 +1381,7 @@ st.markdown("The dataset we used to analyze the airquality comes from the Enviro
       
             
 #Options for the reader to look at the datasets
-st.success("Please choose one dataset at a time, to explore the data that we used for the analysis!")
+st.success("Please choose one dataset at a time, to explore the data that we used for the analysis! Be patient - it takes some time to load.")
 left_column2, middle_column2, right_column2 ,very_right_column2= st.columns((1,1,1,1))
 with left_column2:
     health_check= st.checkbox('Explore health data')
@@ -1768,6 +1769,10 @@ Yet, in order to predict the physical health of the citizens of NY one has to ta
 into account a lot more factors than just the number of trees in the districts, most of all the\
 social factors. 
 ''')
+
+st.header("Notebook")
+st.markdown("If you are interested in seeing the whole analysis and the code behind the visualizations,\
+            you can find the jupiter notebook with thorough explanation [here](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb).")
 
 #%%%% Hide Menu
 hide_menu_style = """

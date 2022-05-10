@@ -1297,7 +1297,7 @@ st.sidebar.markdown("* [Data Exploration](#data-exploration)", unsafe_allow_html
 st.sidebar.markdown("* [Correlation Analysis between airquality, health and tree density](#correlation-analysis-between-airquality-health-and-tree-density)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Machine Learning model](#machine-learning-model)", unsafe_allow_html=True)
 st.sidebar.markdown("* [Conclusion](#conclusion)", unsafe_allow_html=True)
-st.sidebar.markdown("* [Notebook](#notebook)", unsafe_allow_html=True)
+st.sidebar.markdown("* [Notebook](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb)", unsafe_allow_html=True)
 
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1770,9 +1770,6 @@ into account a lot more factors than just the number of trees in the districts, 
 social factors. 
 ''')
 
-st.header("Notebook")
-st.markdown("If you are interested in seeing the whole analysis and the code behind the visualizations,\
-            you can find the jupyter notebook with thorough explanation [here](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb).")
 
 #%%%% Hide Menu
 hide_menu_style = """

@@ -1772,7 +1772,7 @@ social factors.
 
 st.header("Notebook")
 st.markdown("If you are interested in seeing the whole analysis and the code behind the visualizations,\
-            you can find the jupiter notebook with thorough explanation [here](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb).")
+            you can find the jupyter notebook with thorough explanation [here](https://github.com/NinaOeh/newyork_health_analysis_social_data_analysis/blob/main/final_project.ipynb).")
 
 #%%%% Hide Menu
 hide_menu_style = """
